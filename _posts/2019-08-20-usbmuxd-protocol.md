@@ -308,7 +308,7 @@ Number为0表示连接成功。
 
 为了容易理解，我们来和标准的TCP通信做个对比，其中右侧的lockdown，就是标准的TCP Server，而左侧的iTunes，建立与lockdown的连接时不是像标准的TCP Client一样，调用connect函数，而是向usbmuxd写入一段数据，但是，虽然方法不同，但是二者在通信意义上是等价的。
 
-![image-20190821191258760](http://ww1.sinaimg.cn/large/006y8mN6ly1g67l1vog0sj30x70t0aeo.jpg)
+![image-20190821204733214](http://ww3.sinaimg.cn/large/006y8mN6ly1g67l7tqac1j30x70t0tdb.jpg)
 
 并且，当在Connect命令发送后，在iOS侧，lockdown的accept方法会执行，随后双方便可以像标准的TCP通信一样发送和接收数据。
 
