@@ -26,7 +26,7 @@ typora-root-url: /Users/mutsu/project/blog/zyqhi.github.io
 
 
 
-- 新建`ViewController，继承自NSViewController。
+- 新建`ViewController`，继承自NSViewController。
 
 ```swift
 import Cocoa
