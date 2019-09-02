@@ -1,6 +1,7 @@
 ---
 title: usbmux协议分析
 tags: usbmuxd
+typora-root-url: /Users/mutsu/project/blog/zyqhi.github.io
 ---
 
 # usbmux协议介绍
@@ -19,9 +20,7 @@ usbmuxd是对usbmux协议在macOS平台的上实现，也是macOS系统上的一
 
 **/System/Library/LaunchDaemons/com.apple.usbmuxd.plist**为usbmuxd服务的开机启动配置文件，如图所示。launchd在系统启动时会根据该文件的配置信息，启动usbmuxd服务，创建对应的socket（也即/var/run/usbmuxd）。
 
-![image-20190820203643037](http://ww4.sinaimg.cn/large/006y8mN6ly1g67kytqiw2j31ff0u07g0.jpg)
-
-**/var/run/usbmuxd**在开机启动时创建，该文件其实是一个[Unix Domain Socket](https://en.wikipedia.org/wiki/Unix_domain_socket)，用于usbmuxd进程和其他进程——比如Xcode、iTunes等——之间的进程间通信（IPC）。
+![image-20190820203643037](/../../../../../../../media/2019-08-20-usbmuxd-protocol/image-20190820203643037.png)**/var/run/usbmuxd**在开机启动时创建，该文件其实是一个[Unix Domain Socket](https://en.wikipedia.org/wiki/Unix_domain_socket)，用于usbmuxd进程和其他进程——比如Xcode、iTunes等——之间的进程间通信（IPC）。
 
 ``` shell
 ➜  zyqhi.github.io git:(master) ✗ file /var/run/usbmuxd
@@ -42,7 +41,7 @@ usbmuxd是对usbmux协议在macOS平台的上实现，也是macOS系统上的一
 
 说完usbmux协议的用途，我们再来看看usbmux协议是怎样工作的。这里以iTunes和iOS通信为例，来看下整个通信架构，如图所示：
 
-![image-20190821135515906](http://ww2.sinaimg.cn/large/006y8mN6ly1g67l0urzuyj30z90hit9x.jpg)
+![image-20190902163407986](/../../../../../../../media/2019-08-20-usbmuxd-protocol/image-20190902163407986.png)
 
 从图中可以看出，整个通信架构和经典的C/S架构非常类似。其中iOS端的服务（lockdown）的角色是服务端，macOS端的程序（iTunes）则为客户端。
 
@@ -56,13 +55,13 @@ usbmuxd是对usbmux协议在macOS平台的上实现，也是macOS系统上的一
 
 图中的lockdown是iOS端的系统服务，它在iOS系统启动时，由launchd进程启动。lockdown服务对应的启动配置文件在iOS系统上的完整路径为：**/System/Library/LaunchDaemons/com.apple.mobile.lockdown.plist**。
 
-![image-20190821135906471](http://ww2.sinaimg.cn/large/006y8mN6ly1g67l12s8wij31eo0t2qev.jpg)
+![image-20190821135906471](/../../../../../../../media/2019-08-20-usbmuxd-protocol/image-20190821135906471.png)
 
 lockdown作为一个网关，用于协调macOS进程和iOS其他服务之间的通信。像我们平时用到的iTunes备份iPhone，Xcode真机调试等功能，在iOS侧，都是需要lockdown服务进行中转处理的。举个例子，Xcode若要执行真机调试，首先需要和lockdown服务通信，发出启动调试请求，lockdown收到请求以后，启动iOS端对应的调试服务（debugserver），然后Xcode便与debugserver之间建立了通信连接。
 
 lockdown服务启动以后，会创建一个TCP listen socket，端口号为62078，地址为本机地址：127.0.0.1。这一点我们可以在越狱机器上得到验证：
 
-![image-20190821141233973](http://ww3.sinaimg.cn/large/006y8mN6ly1g67l16se48j31ej0u0qhl.jpg)
+![image-20190821141233973](/../../../../../../../media/2019-08-20-usbmuxd-protocol/image-20190821141233973.png)
 
 如果从TCP/IP网络编程的角度来看lockdown的话，会发现它和普通的TCP Server没有差别。
 
@@ -189,7 +188,7 @@ void send_packet(NSDictionary *packetDict, int tag, dispatch_io_t channel) {
 
 对应的报文格式如下图所示：
 
-![image-20190821164908991](http://ww4.sinaimg.cn/large/006y8mN6ly1g67l1gf4fij319m0kxgnn.jpg)
+![image-20190821164908991](/../../../../../../../media/2019-08-20-usbmuxd-protocol/image-20190821164908991.png)
 
 Listen命令发送成功以后，每当有iOS设备插拔，便会收到usbmuxd服务返回的数据。读取逻辑如下：
 
@@ -250,7 +249,7 @@ void read_packet_on_channle(dispatch_io_t channel) {
 3. 头部和载荷读取完成之后，构成一个完整的报文，此时以plist格式解析载荷，获取返回内容；
 4. 读取下一个报文，读操作采用的I/O模式是阻塞模式，一直监听是否有数据，当有数据时便进行读取解析。
 
-![image-20190821171830735](http://ww1.sinaimg.cn/large/006y8mN6ly1g67l1khc1cj319m0rrad3.jpg)
+![image-20190821171830735](/../../../../../../../media/2019-08-20-usbmuxd-protocol/image-20190821171830735.png)
 
 如图所示，是当iOS设备通过USB连接到（Attached）Mac时，usbmuxd服务返回的数据。其中比较关键的字段有两个：
 
@@ -300,19 +299,19 @@ void send_connect_usb_packet() {
 
 对应的报文格式为：
 
-![image-20190821193559069](http://ww4.sinaimg.cn/large/006y8mN6ly1g67l1p6dy2j319m0kxmyn.jpg)
+![image-20190821193559069](/../../../../../../../media/2019-08-20-usbmuxd-protocol/image-20190821193559069.png)
 
 > 注：实际发送过程中此处的PortNumber会以网络字节序的形式传输。
 
 发送Connect命令之后，如果连接成功，此时便会收到usbmuxd返回的数据（读取Connect返回的数据和之前的读取Listen命令返回的数据方式相同）：
 
-![image-20190821193827916](http://ww2.sinaimg.cn/large/006y8mN6ly1g67l1sgctij319m0fo3z8.jpg)
+![image-20190821193827916](/../../../../../../../media/2019-08-20-usbmuxd-protocol/image-20190821193827916.png)
 
 Number为0表示连接成功。
 
 为了容易理解，我们来和标准的TCP通信做个对比，其中右侧的lockdown，就是标准的TCP Server，而左侧的iTunes，建立与lockdown的连接时不是像标准的TCP Client一样，调用connect函数，而是向usbmuxd服务发送Connect命令。然而，虽然方法不同，但是二者在通信意义上是等价的。
 
-![image-20190821204733214](http://ww3.sinaimg.cn/large/006y8mN6ly1g67l7tqac1j30x70t0tdb.jpg)
+![image-20190902163830106](/../../../../../../../media/2019-08-20-usbmuxd-protocol/image-20190902163830106.png)
 
 并且，当在Connect命令发送后，在iOS侧，lockdown的accept方法会执行，随后双方便可以像标准的TCP通信一样发送和接收数据。
 
@@ -365,7 +364,7 @@ void send_msg(NSString *msg) {
 
 答案是，如我们所愿，利用usbmuxd协议，我们建立了自己的macOS应用和iOS APP之间的通信连接，随后便可在此协议的基础之上，实现自建iOS APP和macOS应用程序之间的高效通信。整个通信框架如下：
 
-![image-20190821201547383](http://ww3.sinaimg.cn/large/006y8mN6ly1g67l20gsdkj30z90hiaba.jpg)
+![image-20190902163853436](/../../../../../../../media/2019-08-20-usbmuxd-protocol/image-20190902163853436.png)
 
 前文中花了大量的篇幅来阐述usbmux协议的原理，最终的目的就是这么简单，我们想在自己的产品中应用usbmux协议。
 
