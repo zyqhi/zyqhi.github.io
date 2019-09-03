@@ -217,6 +217,7 @@ defaults:
 
 ## => Compose
 jekyll_compose:
+  auto_open: true
   post_default_front_matter:
     layout:
     tags:
