@@ -1,6 +1,10 @@
 ---
 title: NSCollectionView vs UICollectionView
 tags: macOS AppKit
+article_header:
+  type: cover
+  image:
+    src: /cover/cover1.jpg
 typora-root-url: /Users/mutsu/project/blog/zyqhi.github.io
 ---
 
