@@ -171,6 +171,12 @@ $ which python
   python -c 'from requests_futures.sessions import FuturesSession'
   ```
 
+
+
+此次crash问题本质还是Python环境的问题，但问题具体出在哪里我不是特别清楚，能想到的解决方式也是这种暴力的重置环境的方式。
+
+但是crash可能的原因有Vim/YouCompleteMe/Python三种，最终定位到是Python导致的，期间做过的测试、调查、求助还是有代表意义的。
+
 # 参考
 
 - [pyenv](https://opensource.com/article/19/5/python-3-default-mac)
