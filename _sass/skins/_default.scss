@@ -37,7 +37,8 @@ $text-background-color: rgba(#000, .05);
 
 // header and footer colors
 $header-text-color: $text-color-3;
-$header-background: $main-color-3;
+$header-background: #fff;
+$header-box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
 
 $footer-text-color: $text-color-3;
 $footer-background: $main-color-3;
