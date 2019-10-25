@@ -3,6 +3,7 @@ title: macOS 10.15 Vim crash修复之路
 tags: Vim Python
 typora-root-url: "/Users/mutsu/project/blog/zyqhi.github.io"
 comments: true
+key: "fix-vim-crash-on-macos"
 ---
 
 macOS 10.15 Catalina更新以后，我第一时间更新了系统。但这次系统升级遇到的问题，比我预期的要多。对我而言，其中影响比较大的是MacVim不能用了。
